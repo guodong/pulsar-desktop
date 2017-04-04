@@ -2,6 +2,7 @@ FROM cloudwarelabs/xorg:latest
 MAINTAINER guodong <gd@tongjo.com>
 RUN apt-get update
 RUN apt-get install -y libwebp-dev libwebsockets-dev libx11-dev libxdamage-dev libxtst-dev
+RUN /usr/share/debconf/fix_db.pl && dpkg-reconfigure dictionaries-common
 RUN apt-get install -y gnome-themes-standard xfce4-session xfce4-panel
 RUN sed -i '2s/.*/gtk-theme-name = Adwaita/' /etc/gtk-3.0/settings.ini
 COPY pulsar /usr/local/bin/pulsar
