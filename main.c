@@ -187,11 +187,12 @@ static int callback_protocol(struct lws *wsi,
                 ximg->data[i] = 0xff;
             }
             output_size = WebPEncodeBGRA(ximg->data, width, height, width << 2, 80, &output);
-            unsigned char *buf = malloc(LWS_SEND_BUFFER_PRE_PADDING + output_size + 8 + LWS_SEND_BUFFER_POST_PADDING);
-            memcpy(buf + LWS_SEND_BUFFER_PRE_PADDING, &x, 4);
-            memcpy(buf + LWS_SEND_BUFFER_PRE_PADDING + 4, &y, 4);
-            memcpy(buf + LWS_SEND_BUFFER_PRE_PADDING + 8, output, output_size);
-            lws_write(wsi, &buf[LWS_SEND_BUFFER_PRE_PADDING], output_size + 8, LWS_WRITE_BINARY);
+            unsigned char *buf = malloc(LWS_PRE + output_size + 8);
+            memset(buf, 0, LWS_PRE + output_size + 8);
+            memcpy(buf + LWS_PRE, &x, 4);
+            memcpy(buf + LWS_PRE + 4, &y, 4);
+            memcpy(buf + LWS_PRE + 8, output, output_size);
+            lws_write(wsi, &buf[LWS_PRE], output_size + 8, LWS_WRITE_BINARY);
             free(output);
             free(ximg->data);
             free(ximg);
