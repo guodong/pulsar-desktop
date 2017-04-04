@@ -1,6 +1,6 @@
 FROM cloudwarelabs/xorg:latest
 MAINTAINER guodong <gd@tongjo.com>
-RUN apt-get update
+RUN apt-get upgrade
 RUN apt-get install -y gcc git libwebp-dev libwebsockets-dev libx11-dev libxdamage-dev libxtst-dev
 RUN apt-get install -y gnome-themes-standard xfce4
 RUN sed -i '2s/.*/gtk-theme-name = Adwaita/' /etc/gtk-3.0/settings.ini
