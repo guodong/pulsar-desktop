@@ -7,16 +7,15 @@
 #include <libwebsockets.h>
 #include <string.h>
 #include <pthread.h>
-static int callback_protocol(struct libwebsocket_context *this,
-                             struct libwebsocket *wsi,
-                             enum libwebsocket_callback_reasons reason,
+static int callback_protocol(struct lws *wsi,
+                             enum lws_callback_reasons reason,
                              void *user,
                              void *in,
                              size_t len);
 
 Display *display;
 Window root;
-struct libwebsocket_context *context;
+struct lws_context *context;
 
 struct Region {
     int x;
@@ -28,7 +27,7 @@ struct Region {
 
 struct Region region;
 
-static struct libwebsocket_protocols protocols[] = {
+static struct lws_protocols protocols[] = {
     {
         "cloudware-interacting-protocol",
         callback_protocol,
@@ -77,7 +76,6 @@ void xserver_thread(void *data)
     struct libwebsocket *wsi = (struct libwebsocket*)data;
 
     Display *display = XOpenDisplay(NULL);
-    root = RootWindow(display, DefaultScreen(display));
 
     int damage_event_base, damage_error_base;
     XDamageQueryExtension(display, &damage_event_base, &damage_error_base);
@@ -109,9 +107,8 @@ void xserver_thread(void *data)
 
 }
 
-static int callback_protocol(struct libwebsocket_context *this,
-                             struct libwebsocket *wsi,
-                             enum libwebsocket_callback_reasons reason,
+static int callback_protocol(struct lws *wsi,
+                             enum lws_callback_reasons reason,
                              void *user,
                              void *in,
                              size_t len)
@@ -194,7 +191,7 @@ static int callback_protocol(struct libwebsocket_context *this,
             memcpy(buf + LWS_SEND_BUFFER_PRE_PADDING, &x, 4);
             memcpy(buf + LWS_SEND_BUFFER_PRE_PADDING + 4, &y, 4);
             memcpy(buf + LWS_SEND_BUFFER_PRE_PADDING + 8, output, output_size);
-            libwebsocket_write(wsi, &buf[LWS_SEND_BUFFER_PRE_PADDING], output_size + 8, LWS_WRITE_BINARY);
+            lws_write(wsi, &buf[LWS_SEND_BUFFER_PRE_PADDING], output_size + 8, LWS_WRITE_BINARY);
             free(output);
             free(ximg->data);
             free(ximg);
@@ -216,8 +213,8 @@ int main()
             printf("success connected to xserver\n");
             break;
         }
-        sleep(1);
     }
+    root = RootWindow(display, DefaultScreen(display));
     region.init = 1;
     region.x = 0;
     region.y = 0;
@@ -228,11 +225,11 @@ int main()
     info.port = 5678;
     info.protocols = protocols;
 
-    context = libwebsocket_create_context(&info);
+    context = lws_create_context(&info);
 
     while (1) {
-        libwebsocket_callback_on_writable_all_protocol(protocols);
-        libwebsocket_service(context, 20);
+        lws_callback_on_writable_all_protocol(context, protocols);
+        lws_service(context, 20);
         usleep(1000);
     }
     return 0;
