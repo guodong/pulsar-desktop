@@ -120,8 +120,9 @@ static int callback_protocol(struct libwebsocket_context *this,
     case LWS_CALLBACK_ESTABLISHED:
         printf("connection established\n");
 
-        pthread_t xserver_thrd, poll_thrd;
+        pthread_t xserver_thrd;
         pthread_create(&xserver_thrd, NULL, (void*)xserver_thread, wsi);
+        region_add(0, 0, 1440, 900);
         break;
     case LWS_CALLBACK_RECEIVE: {
         char *data = (char*)in;
