@@ -5,4 +5,5 @@ RUN apt-get install -y gcc git libwebp-dev libwebsockets-dev libx11-dev libxdama
 COPY pulsar /usr/local/bin/pulsar
 COPY start.sh /usr/local/bin/start.sh
 EXPOSE 5678
+ENV DISPLAY :0
 CMD start.sh
