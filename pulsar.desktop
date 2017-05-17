@@ -8,4 +8,4 @@ Exec=pulsar
 OnlyShowIn=XFCE;
 StartupNotify=false
 Terminal=false
-Hidden=true
+Hidden=false
