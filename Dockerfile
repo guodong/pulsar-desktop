@@ -4,6 +4,5 @@ RUN apt-get update
 RUN apt-get install -y libwebp-dev libx11-dev libxdamage-dev libxtst-dev
 COPY pulsar /usr/local/bin/pulsar
 COPY libwebsockets.so.10 /usr/lib/
-COPY pulsar.desktop ~/.config/autostart/
+COPY pulsar.desktop /root/.config/autostart/
 EXPOSE 5678
-ENV DISPLAY :0
